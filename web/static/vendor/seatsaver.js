@@ -8260,6 +8260,9 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _user$project$SeatSaver$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
 var _user$project$SeatSaver$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -8268,45 +8271,51 @@ var _user$project$SeatSaver$update = F2(
 				seatFromModel,
 				{occupied: !seatFromModel.occupied}) : seatFromModel;
 		};
-		return A2(_elm_lang$core$List$map, updateSeat, model);
+		return {
+			ctor: '_Tuple2',
+			_0: A2(_elm_lang$core$List$map, updateSeat, model),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
 	});
-var _user$project$SeatSaver$init = {
-	ctor: '::',
-	_0: {seatNumber: 1, occupied: false},
-	_1: {
+var _user$project$SeatSaver$init = function () {
+	var seats = {
 		ctor: '::',
-		_0: {seatNumber: 2, occupied: false},
+		_0: {seatNumber: 1, occupied: false},
 		_1: {
 			ctor: '::',
-			_0: {seatNumber: 3, occupied: false},
+			_0: {seatNumber: 2, occupied: false},
 			_1: {
 				ctor: '::',
-				_0: {seatNumber: 4, occupied: false},
+				_0: {seatNumber: 3, occupied: false},
 				_1: {
 					ctor: '::',
-					_0: {seatNumber: 5, occupied: false},
+					_0: {seatNumber: 4, occupied: false},
 					_1: {
 						ctor: '::',
-						_0: {seatNumber: 6, occupied: false},
+						_0: {seatNumber: 5, occupied: false},
 						_1: {
 							ctor: '::',
-							_0: {seatNumber: 7, occupied: false},
+							_0: {seatNumber: 6, occupied: false},
 							_1: {
 								ctor: '::',
-								_0: {seatNumber: 8, occupied: false},
+								_0: {seatNumber: 7, occupied: false},
 								_1: {
 									ctor: '::',
-									_0: {seatNumber: 9, occupied: false},
+									_0: {seatNumber: 8, occupied: false},
 									_1: {
 										ctor: '::',
-										_0: {seatNumber: 10, occupied: false},
+										_0: {seatNumber: 9, occupied: false},
 										_1: {
 											ctor: '::',
-											_0: {seatNumber: 11, occupied: false},
+											_0: {seatNumber: 10, occupied: false},
 											_1: {
 												ctor: '::',
-												_0: {seatNumber: 12, occupied: false},
-												_1: {ctor: '[]'}
+												_0: {seatNumber: 11, occupied: false},
+												_1: {
+													ctor: '::',
+													_0: {seatNumber: 12, occupied: false},
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}
@@ -8317,8 +8326,9 @@ var _user$project$SeatSaver$init = {
 				}
 			}
 		}
-	}
-};
+	};
+	return {ctor: '_Tuple2', _0: seats, _1: _elm_lang$core$Platform_Cmd$none};
+}();
 var _user$project$SeatSaver$Seat = F2(
 	function (a, b) {
 		return {seatNumber: a, occupied: b};
@@ -8358,8 +8368,8 @@ var _user$project$SeatSaver$view = function (model) {
 		},
 		A2(_elm_lang$core$List$map, _user$project$SeatSaver$seatItem, model));
 };
-var _user$project$SeatSaver$main = _elm_lang$html$Html$beginnerProgram(
-	{model: _user$project$SeatSaver$init, update: _user$project$SeatSaver$update, view: _user$project$SeatSaver$view})();
+var _user$project$SeatSaver$main = _elm_lang$html$Html$program(
+	{init: _user$project$SeatSaver$init, update: _user$project$SeatSaver$update, view: _user$project$SeatSaver$view, subscriptions: _user$project$SeatSaver$subscriptions})();
 
 var Elm = {};
 Elm['SeatSaver'] = Elm['SeatSaver'] || {};
