@@ -4,6 +4,9 @@ import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 
+import Http
+import Json.Decode exposing (..)
+
 main = Html.program
     { init = init
     , update = update
@@ -23,26 +26,26 @@ type alias Model =
 
 init : (Model, Cmd Msg)
 init = 
-  let 
-      seats = 
-        [ { seatNumber = 1, occupied = False }
-        , { seatNumber = 2, occupied = False }
-        , { seatNumber = 3, occupied = False }
-        , { seatNumber = 4, occupied = False }
-        , { seatNumber = 5, occupied = False }
-        , { seatNumber = 6, occupied = False }
-        , { seatNumber = 7, occupied = False }
-        , { seatNumber = 8, occupied = False }
-        , { seatNumber = 9, occupied = False }
-        , { seatNumber = 10, occupied = False }
-        , { seatNumber = 11, occupied = False }
-        , { seatNumber = 12, occupied = False }
-        ]
+  ([], fetchSeats)
+
+fetchSeats : Cmd Msg
+fetchSeats = 
+  let
+    url = "http://localhost:4000/api/seats"
+    request = Http.get url decodeResponse
   in
-     (seats, Cmd.none)
+    Http.send FetchedSeats request 
+
+decodeResponse : Decoder Model 
+decodeResponse =
+  let 
+    seat = 
+      map2 Seat (field "seatNumber" int) (field "occupied" bool)    
+  in
+    at ["data"] (list seat) 
 
 -- UPDATE
-type Msg = Toggle Seat
+type Msg = Toggle Seat | FetchedSeats (Result Http.Error Model)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 
@@ -57,6 +60,10 @@ update msg model =
                seatFromModel
       in
          (List.map updateSeat model, Cmd.none)
+    FetchedSeats (Ok new_model) ->
+      (new_model, Cmd.none)
+    FetchedSeats (Err _) ->
+      (model, Cmd.none)
 
 -- VIEW
 view : Model -> Html Msg 
