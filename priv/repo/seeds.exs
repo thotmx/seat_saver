@@ -1,11 +1,13 @@
-# Script for populating the database. You can run it as:
-#
-#     mix run priv/repo/seeds.exs
-#
-# Inside the script, you can read and write to any of your
-# repositories directly:
-#
-#     SeatSaver.Repo.insert!(%SeatSaver.SomeModel{})
-#
-# We recommend using the bang functions (`insert!`, `update!`
-# and so on) as they will fail if something goes wrong.
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 1, occupied: true})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 2, occupied: true})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 3, occupied: false})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 4, occupied: false})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 5, occupied: false})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 6, occupied: false})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 7, occupied: false})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 8, occupied: false})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 9, occupied: false})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 10, occupied: false})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 11, occupied: false})
+SeatSaver.Repo.insert!(%SeatSaver.Seat{seat_number: 12, occupied: false})
+

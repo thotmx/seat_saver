@@ -1,14 +1,15 @@
-module SeatSaver exposing (..)
+port module SeatSaver exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import WebSocket
 
-main = Html.program
+main = Html.programWithFlags
     { init = init
     , update = update
     , view = view
-    , subscriptions = subscriptions 
+    , subscriptions = always (seatLists UpdateAll) 
     }
 
 -- MODEL 
@@ -21,28 +22,15 @@ type alias Seat =
 type alias Model =
   List Seat
 
-init : (Model, Cmd Msg)
-init = 
-  let 
-      seats = 
-        [ { seatNumber = 1, occupied = False }
-        , { seatNumber = 2, occupied = False }
-        , { seatNumber = 3, occupied = False }
-        , { seatNumber = 4, occupied = False }
-        , { seatNumber = 5, occupied = False }
-        , { seatNumber = 6, occupied = False }
-        , { seatNumber = 7, occupied = False }
-        , { seatNumber = 8, occupied = False }
-        , { seatNumber = 9, occupied = False }
-        , { seatNumber = 10, occupied = False }
-        , { seatNumber = 11, occupied = False }
-        , { seatNumber = 12, occupied = False }
-        ]
-  in
-     (seats, Cmd.none)
+init : { seatLists: Model } -> (Model, Cmd Msg)
+init flags = 
+  (flags.seatLists, Cmd.none)
+
+-- SIGNALS
+port seatLists: ( Model -> msg) -> Sub msg 
 
 -- UPDATE
-type Msg = Toggle Seat
+type Msg = Toggle Seat | UpdateAll Model
 
 update : Msg -> Model -> (Model, Cmd Msg)
 
@@ -57,6 +45,9 @@ update msg model =
                seatFromModel
       in
          (List.map updateSeat model, Cmd.none)
+    UpdateAll new_model -> 
+      (new_model, Cmd.none)
+     
 
 -- VIEW
 view : Model -> Html Msg 
@@ -77,4 +68,4 @@ seatItem seat =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+   Sub.none
