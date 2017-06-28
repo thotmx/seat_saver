@@ -1,24 +1,3 @@
-var _user$project$SeatSaver$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$none;
-};
-var _user$project$SeatSaver$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		if (_p0.ctor === 'Toggle') {
-			var updateSeat = function (seatFromModel) {
-				return _elm_lang$core$Native_Utils.eq(seatFromModel.seatNumber, _p0._0.seatNumber) ? _elm_lang$core$Native_Utils.update(
-					seatFromModel,
-					{occupied: !seatFromModel.occupied}) : seatFromModel;
-			};
-			return {
-				ctor: '_Tuple2',
-				_0: A2(_elm_lang$core$List$map, updateSeat, model),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {ctor: '_Tuple2', _0: _p0._0, _1: _elm_lang$core$Platform_Cmd$none};
-		}
-	});
 var _user$project$SeatSaver$init = function (flags) {
 	return {ctor: '_Tuple2', _0: flags.seatLists, _1: _elm_lang$core$Platform_Cmd$none};
 };
@@ -37,15 +16,57 @@ var _user$project$SeatSaver$seatLists = _elm_lang$core$Native_Platform.incomingP
 					A2(_elm_lang$core$Json_Decode$field, 'occupied', _elm_lang$core$Json_Decode$bool));
 			},
 			A2(_elm_lang$core$Json_Decode$field, 'seatNumber', _elm_lang$core$Json_Decode$int))));
+var _user$project$SeatSaver$seatRequests = _elm_lang$core$Native_Platform.outgoingPort(
+	'seatRequests',
+	function (v) {
+		return {seatNumber: v.seatNumber, occupied: v.occupied};
+	});
+var _user$project$SeatSaver$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'Toggle':
+				var _p1 = _p0._0;
+				var updateSeat = function (seatFromModel) {
+					return _elm_lang$core$Native_Utils.eq(seatFromModel.seatNumber, _p1.seatNumber) ? _elm_lang$core$Native_Utils.update(
+						seatFromModel,
+						{occupied: _p1.occupied}) : seatFromModel;
+				};
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_elm_lang$core$List$map, updateSeat, model),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdateAll':
+				return {ctor: '_Tuple2', _0: _p0._0, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$SeatSaver$seatRequests(_p0._0)
+				};
+		}
+	});
+var _user$project$SeatSaver$seatUpdates = _elm_lang$core$Native_Platform.incomingPort(
+	'seatUpdates',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (seatNumber) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				function (occupied) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{seatNumber: seatNumber, occupied: occupied});
+				},
+				A2(_elm_lang$core$Json_Decode$field, 'occupied', _elm_lang$core$Json_Decode$bool));
+		},
+		A2(_elm_lang$core$Json_Decode$field, 'seatNumber', _elm_lang$core$Json_Decode$int)));
 var _user$project$SeatSaver$Seat = F2(
 	function (a, b) {
 		return {seatNumber: a, occupied: b};
 	});
-var _user$project$SeatSaver$UpdateAll = function (a) {
-	return {ctor: 'UpdateAll', _0: a};
-};
-var _user$project$SeatSaver$Toggle = function (a) {
-	return {ctor: 'Toggle', _0: a};
+var _user$project$SeatSaver$ToggleSeat = function (a) {
+	return {ctor: 'ToggleSeat', _0: a};
 };
 var _user$project$SeatSaver$seatItem = function (seat) {
 	var occupiedClass = seat.occupied ? 'occupied' : 'available';
@@ -58,7 +79,7 @@ var _user$project$SeatSaver$seatItem = function (seat) {
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$html$Html_Events$onClick(
-					_user$project$SeatSaver$Toggle(seat)),
+					_user$project$SeatSaver$ToggleSeat(seat)),
 				_1: {ctor: '[]'}
 			}
 		},
@@ -79,14 +100,29 @@ var _user$project$SeatSaver$view = function (model) {
 		},
 		A2(_elm_lang$core$List$map, _user$project$SeatSaver$seatItem, model));
 };
+var _user$project$SeatSaver$UpdateAll = function (a) {
+	return {ctor: 'UpdateAll', _0: a};
+};
+var _user$project$SeatSaver$Toggle = function (a) {
+	return {ctor: 'Toggle', _0: a};
+};
+var _user$project$SeatSaver$updateSeat = function (seat) {
+	return _user$project$SeatSaver$Toggle(seat);
+};
+var _user$project$SeatSaver$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: _user$project$SeatSaver$seatLists(_user$project$SeatSaver$UpdateAll),
+			_1: {
+				ctor: '::',
+				_0: _user$project$SeatSaver$seatUpdates(_user$project$SeatSaver$Toggle),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _user$project$SeatSaver$main = _elm_lang$html$Html$programWithFlags(
-	{
-		init: _user$project$SeatSaver$init,
-		update: _user$project$SeatSaver$update,
-		view: _user$project$SeatSaver$view,
-		subscriptions: _elm_lang$core$Basics$always(
-			_user$project$SeatSaver$seatLists(_user$project$SeatSaver$UpdateAll))
-	})(
+	{init: _user$project$SeatSaver$init, update: _user$project$SeatSaver$update, view: _user$project$SeatSaver$view, subscriptions: _user$project$SeatSaver$subscriptions})(
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
 		function (seatLists) {

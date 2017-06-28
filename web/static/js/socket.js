@@ -60,7 +60,17 @@ let channel = socket.channel("seats:planner", {})
 channel.on('set_seats', data => { 
   console.log('got seats', data.seats)
   elmapp.ports.seatLists.send(data.seats)
+
 })
+
+elmapp.ports.seatRequests.subscribe(seat => {
+  channel.push("request_seat", seat)
+         .receive("error", payload => console.log(payload.message))
+})
+
+channel.on('seat_updated', seat => {  
+  console.log("Updated...", seat)
+  elmapp.ports.seatUpdates.send(seat) } )
 
 channel.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })

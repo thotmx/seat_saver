@@ -18,8 +18,18 @@ defmodule SeatSaver.SeatChannel do
 
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
-  def handle_in("ping", payload, socket) do
-    {:reply, {:ok, payload}, socket}
+  def handle_in("request_seat", payload, socket) do
+    seat = Repo.get_by!(SeatSaver.Seat, seat_number: payload["seatNumber"])
+    seat_params = %{ occupied: !payload["occupied"] } 
+    changeset = SeatSaver.Seat.changeset(seat, seat_params)
+
+    case Repo.update(changeset) do
+      { :ok, seat} ->
+        broadcast socket, "seat_updated", seat
+        { :noreply, socket}
+      { :error, _changeset } ->
+        { :reply, { :error, %{ message: "Something went wrong" }}, socket} 
+    end
   end
 
   # It is also common to receive messages from the client and
